@@ -127,3 +127,75 @@ The request body must be a JSON object with the following structure:
 ## Notes
 - On success, a JWT token is returned for authentication in subsequent requests.
 - All fields must be sent in the request body as shown above.
+
+---
+
+## Get User Profile Endpoint
+
+`GET /users/profile`
+
+### Description
+Retrieves the authenticated user's profile information. Requires a valid JWT token in the request (via Authorization header or cookie).
+
+### Authentication
+- Requires authentication (JWT token).
+
+### Request
+- No request body required.
+- JWT token must be provided in the `Authorization` header as `Bearer <token>` or as a `token` cookie.
+
+### Responses
+
+#### 200 OK
+- **Description:** Returns the user's profile information.
+- **Body:**
+  ```
+  {
+    ...userObject
+  }
+  ```
+
+#### 401 Unauthorized
+- **Description:** Missing or invalid authentication token.
+- **Body:**
+  ```
+  {
+    "message": "Unauthorized"
+  }
+  ```
+
+---
+
+## Logout Endpoint
+
+`GET /users/logout`
+
+### Description
+Logs out the authenticated user by blacklisting the current JWT token and clearing the authentication cookie.
+
+### Authentication
+- Requires authentication (JWT token).
+
+### Request
+- No request body required.
+- JWT token must be provided in the `Authorization` header as `Bearer <token>` or as a `token` cookie.
+
+### Responses
+
+#### 200 OK
+- **Description:** User logged out successfully.
+- **Body:**
+  ```
+  {
+    "message": "Logged out"
+  }
+  ```
+
+#### 401 Unauthorized
+- **Description:** Missing or invalid authentication token.
+- **Body:**
+  ```
+  {
+    "message": "Unauthorized"
+  }
+  ```
