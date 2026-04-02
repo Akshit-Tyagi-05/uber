@@ -199,3 +199,225 @@ Logs out the authenticated user by blacklisting the current JWT token and cleari
     "message": "Unauthorized"
   }
   ```
+
+
+
+## Captain Registration and Login Endpoints
+
+### Registration Endpoint
+
+`POST /captains/register`
+
+#### Description
+Registers a new captain in the system. This endpoint creates a captain account with the provided details and returns an authentication token upon successful registration.
+
+#### Request Body
+The request body must be a JSON object with the following structure:
+
+```
+{
+  "fullname": {
+    "firstname": "string (min 3 chars, required)",
+    "lastname": "string (min 3 chars, optional)"
+  },
+  "email": "string (valid email, required)",
+  "password": "string (min 6 chars, required)",
+  "vehicle": {
+    "color": "string (min 3 chars, required)",
+    "plate": "string (min 3 chars, required)",
+    "capacity": "integer (min 1, required)",
+    "vehicleType": "string (one of: car, motorcycle, auto, required)"
+  }
+}
+```
+
+##### Example
+```
+{
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Smith"
+  },
+  "email": "jane.smith@example.com",
+  "password": "securePassword123",
+  "vehicle": {
+    "color": "Red",
+    "plate": "XYZ123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+#### Responses
+
+##### 201 Created
+- **Description:** Captain registered successfully.
+- **Body:**
+  ```
+  {
+    "token": "<jwt_token>",
+    "captain": { ...captainObject }
+  }
+  ```
+
+##### 400 Bad Request
+- **Description:** Validation failed. The request body is missing required fields or contains invalid data.
+- **Body:**
+  ```
+  {
+    "errors": [ { "msg": "Error message", ... } ]
+  }
+  ```
+
+##### 400 Bad Request
+- **Description:** Captain already exists.
+- **Body:**
+  ```
+  {
+    "message": "Captain already exist"
+  }
+  ```
+
+#### Validation Rules
+- `fullname.firstname`: Required, minimum 3 characters
+- `fullname.lastname`: Optional, minimum 3 characters if provided
+- `email`: Required, must be a valid email address
+- `password`: Required, minimum 6 characters
+- `vehicle.color`: Required, minimum 3 characters
+- `vehicle.plate`: Required, minimum 3 characters
+- `vehicle.capacity`: Required, integer, minimum 1
+- `vehicle.vehicleType`: Required, one of: car, motorcycle, auto
+
+---
+
+### Login Endpoint
+
+`POST /captains/login`
+
+#### Description
+Authenticates a captain with email and password. Returns a JWT token and captain object if credentials are valid.
+
+#### Request Body
+The request body must be a JSON object with the following structure:
+
+```
+{
+  "email": "string (valid email, required)",
+  "password": "string (min 6 chars, required)"
+}
+```
+
+##### Example
+```
+{
+  "email": "jane.smith@example.com",
+  "password": "securePassword123"
+}
+```
+
+#### Responses
+
+##### 200 OK
+- **Description:** Login successful.
+- **Body:**
+  ```
+  {
+    "token": "<jwt_token>",
+    "captain": { ...captainObject }
+  }
+  ```
+
+##### 400 Bad Request
+- **Description:** Validation failed. The request body is missing required fields or contains invalid data.
+- **Body:**
+  ```
+  {
+    "errors": [ { "msg": "Error message", ... } ]
+  }
+  ```
+
+##### 401 Unauthorized
+- **Description:** Invalid email or password.
+- **Body:**
+  ```
+  {
+    "message": "Invalid email or password"
+  }
+  ```
+
+#### Validation Rules
+- `email`: Required, must be a valid email address
+- `password`: Required, minimum 6 characters
+
+---
+
+### Get Captain Profile Endpoint
+
+`GET /captains/profile`
+
+#### Description
+Retrieves the authenticated captain's profile information. Requires a valid JWT token in the request (via Authorization header or cookie).
+
+#### Authentication
+- Requires authentication (JWT token).
+
+#### Request
+- No request body required.
+- JWT token must be provided in the `Authorization` header as `Bearer <token>` or as a `token` cookie.
+
+#### Responses
+
+##### 200 OK
+- **Description:** Returns the captain's profile information.
+- **Body:**
+  ```
+  {
+    "captain": { ...captainObject }
+  }
+  ```
+
+##### 401 Unauthorized
+- **Description:** Missing or invalid authentication token.
+- **Body:**
+  ```
+  {
+    "message": "Unauthorized"
+  }
+  ```
+
+---
+
+### Logout Endpoint
+
+`GET /captains/logout`
+
+#### Description
+Logs out the authenticated captain by blacklisting the current JWT token and clearing the authentication cookie.
+
+#### Authentication
+- Requires authentication (JWT token).
+
+#### Request
+- No request body required.
+- JWT token must be provided in the `Authorization` header as `Bearer <token>` or as a `token` cookie.
+
+#### Responses
+
+##### 200 OK
+- **Description:** Captain logged out successfully.
+- **Body:**
+  ```
+  {
+    "message": "Logout successfully"
+  }
+  ```
+
+##### 401 Unauthorized
+- **Description:** Missing or invalid authentication token.
+- **Body:**
+  ```
+  {
+    "message": "Unauthorized"
+  }
+  ```
